@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pomodoro Timer - A productivity tool based on the Pomodoro Technique">
+    <meta name="theme-color" content="#e03e3e">
+    <title>Pomodoro Timer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Skip to main content link for accessibility -->
+        <a href="#main-content" class="skip-link">Skip to main content</a>
+
+        <main id="main-content" class="main-content" role="main">
+            <!-- Header -->
+            <header class="header">
+                <h1 class="app-title">Pomodoro Timer</h1>
+                <p class="app-subtitle">Stay focused, take breaks</p>
+            </header>
+
+            <!-- Timer Display -->
+            <section class="timer-section" aria-live="polite" aria-label="Timer display">
+                <div class="session-indicator" id="sessionIndicator" role="status" aria-live="polite">
+                    <span class="session-type" id="sessionType">Work</span>
+                    <span class="session-count" id="sessionCount" aria-label="Completed work sessions">0/4</span>
+                </div>
+
+                <div class="timer-display" role="timer" aria-label="Time remaining">
+                    <svg class="timer-svg" viewBox="0 0 280 280" aria-hidden="true">
+                        <defs>
+                            <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#e03e3e"/>
+                                <stop offset="100%" stop-color="#c53030"/>
+                            </linearGradient>
+                        </defs>
+                        <circle class="timer-bg" cx="140" cy="140" r="120" fill="none" stroke="#e2e8f0" stroke-width="8"/>
+                        <circle class="timer-progress" id="timerProgress" cx="140" cy="140" r="120" fill="none" stroke="url(#timerGradient)" stroke-width="8" stroke-linecap="round" stroke-dasharray="754" stroke-dashoffset="0" transform="rotate(-90 140 140)" style="transition: stroke-dashoffset 1s linear, stroke 0.3s ease;"/>
+                    </svg>
+                    <div class="timer-time" id="timerTime" role="timer" aria-live="off">25:00</div>
+                </div>
+
+                <!-- Timer Controls -->
+                <div class="timer-controls" role="group" aria-label="Timer controls">
+                    <button class="btn btn-primary btn-lg" id="startBtn" aria-label="Start timer" type="button">
+                        <svg class="btn-icon" aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+                        <span class="btn-text" id="startBtnText">Start</span>
+                    </button>
+                    <button class="btn btn-secondary btn-lg" id="pauseBtn" aria-label="Pause timer" type="button" disabled>
+                        <svg class="btn-icon" aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                        <span class="btn-text">Pause</span>
+                    </button>
+                    <button class="btn btn-secondary btn-lg" id="resetBtn" aria-label="Reset timer" type="button">
+                        <svg class="btn-icon" aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                        <span class="btn-text">Reset</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Stats -->
+            <section class="stats-section" aria-label="Statistics">
+                <div class="stat">
+                    <span class="stat-value" id="totalSessions">0</span>
+                    <span class="stat-label">Sessions</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="totalFocusTime">0h</span>
+                    <span class="stat-label">Focus Time</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="currentStreak">0</span>
+                    <span class="stat-label">Streak</span>
+                </div>
+            </section>
+
+            <!-- Settings Panel -->
+            <section class="settings-section" aria-labelledby="settingsHeading">
+                <h2 id="settingsHeading" class="section-title">Settings</h2>
+
+                <div class="settings-grid">
+                    <!-- Work Duration -->
+                    <div class="setting-item">
+                        <label for="workDuration" class="setting-label">Work Duration</label>
+                        <div class="setting-control">
+                            <button class="duration-btn" id="workDecrease" aria-label="Decrease work duration" type="button">−</button>
+                            <input type="number" id="workDuration" class="duration-input" value="25" min="1" max="60" aria-label="Work duration in minutes">
+                            <button class="duration-btn" id="workIncrease" aria-label="Increase work duration" type="button">+</button>
+                            <span class="duration-unit">min</span>
+                        </div>
+                    </div>
+
+                    <!-- Short Break -->
+                    <div class="setting-item">
+                        <label for="shortBreak" class="setting-label">Short Break</label>
+                        <div class="setting-control">
+                            <button class="duration-btn" id="shortDecrease" aria-label="Decrease short break duration" type="button">−</button>
+                            <input type="number" id="shortBreak" class="duration-input" value="5" min="1" max="30" aria-label="Short break duration in minutes">
+                            <button class="duration-btn" id="shortIncrease" aria-label="Increase short break duration" type="button">+</button>
+                            <span class="duration-unit">min</span>
+                        </div>
+                    </div>
+
+                    <!-- Long Break -->
+                    <div class="setting-item">
+                        <label for="longBreak" class="setting-label">Long Break</label>
+                        <div class="setting-control">
+                            <button class="duration-btn" id="longDecrease" aria-label="Decrease long break duration" type="button">−</button>
+                            <input type="number" id="longBreak" class="duration-input" value="15" min="5" max="60" aria-label="Long break duration in minutes">
+                            <button class="duration-btn" id="longIncrease" aria-label="Increase long break duration" type="button">+</button>
+                            <span class="duration-unit">min</span>
+                        </div>
+                    </div>
+
+                    <!-- Sessions until long break -->
+                    <div class="setting-item">
+                        <label for="sessionsUntilLong" class="setting-label">Sessions until Long Break</label>
+                        <div class="setting-control">
+                            <button class="duration-btn" id="sessionsDecrease" aria-label="Decrease sessions until long break" type="button">−</button>
+                            <input type="number" id="sessionsUntilLong" class="duration-input" value="4" min="2" max="10" aria-label="Number of work sessions before long break">
+                            <button class="duration-btn" id="sessionsIncrease" aria-label="Increase sessions until long break" type="button">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sound & Notification Settings -->
+                <div class="settings-toggle-group">
+                    <div class="toggle-item">
+                        <label class="toggle-label" for="soundEnabled">
+                            <span class="toggle-text">Sound Notification</span>
+                            <input type="checkbox" id="soundEnabled" class="toggle-input" checked>
+                            <span class="toggle-slider" aria-hidden="true"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <label class="toggle-label" for="notificationsEnabled">
+                            <span class="toggle-text">Browser Notifications</span>
+                            <input type="checkbox" id="notificationsEnabled" class="toggle-input">
+                            <span class="toggle-slider" aria-hidden="true"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <label class="toggle-label" for="autoStartBreaks">
+                            <span class="toggle-text">Auto-start Breaks</span>
+                            <input type="checkbox" id="autoStartBreaks" class="toggle-input" checked>
+                            <span class="toggle-slider" aria-hidden="true"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <label class="toggle-label" for="autoStartWork">
+                            <span class="toggle-text">Auto-start Work</span>
+                            <input type="checkbox" id="autoStartWork" class="toggle-input">
+                            <span class="toggle-slider" aria-hidden="true"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Sound Selection -->
+                <div class="setting-item sound-selector">
+                    <label for="notificationSound" class="setting-label">Notification Sound</label>
+                    <select id="notificationSound" class="sound-select" aria-label="Select notification sound">
+                        <option value="bell">Bell</option>
+                        <option value="chime">Chime</option>
+                        <option value="ding">Ding</option>
+                        <option value="alarm">Alarm</option>
+                    </select>
+                    <button type="button" id="testSoundBtn" class="btn btn-ghost btn-sm" aria-label="Test selected sound">
+                        <svg class="btn-icon" aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+                        Test
+                    </button>
+                </div>
+            </section>
+
+            <!-- Keyboard Shortcuts Help -->
+            <details class="shortcuts-help" aria-label="Keyboard shortcuts">
+                <summary>Keyboard Shortcuts</summary>
+                <div class="shortcuts-list">
+                    <kbd>Space</kbd> <span>Start / Pause</span>
+                    <kbd>R</kbd> <span>Reset</span>
+                    <kbd>S</kbd> <span>Open Settings</span>
+                    <kbd>←/→</kbd> <span>Adjust Time</span>
+                </div>
+            </details>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer" role="contentinfo">
+            <p>Built with the Pomodoro Technique • <a href="https://github.com" target="_blank" rel="noopener">View on GitHub</a></p>
+        </footer>
+    </div>
+
+    <!-- Audio elements for notifications -->
+    <audio id="soundBell" preload="auto">
+        <source src="assets/sounds/bell.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="soundChime" preload="auto">
+        <source src="assets/sounds/chime.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="soundDing" preload="auto">
+        <source src="assets/sounds/ding.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="soundAlarm" preload="auto">
+        <source src="assets/sounds/alarm.mp3" type="audio/mpeg">
+    </audio>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
